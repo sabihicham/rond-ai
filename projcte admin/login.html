@@ -52,9 +52,6 @@ async function sha256(text){
 }
 
 // -------------------- إعادة ضبط الحساب (تعيين جديد) --------------------
-// سيتم ضبط المستخدم وكلمة المرور المطلوبة عند تحميل الصفحة.
-// user: "admin rayan"
-// pass: "rayan321"
 (async function resetAdminCredentials(){
   const hashed = await sha256(fixedPassPlain);
   // نعيد الضبط دائماً لتضمن أن البيانات المطلوبة هي المستخدمة
@@ -100,4 +97,5 @@ async function login(){
 </script>
 </body>
 </html>
+
 
