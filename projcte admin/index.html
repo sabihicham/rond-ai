@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>صفحة هبوط - Dark Glass UI</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --glass-bg: rgba(255,255,255,0.04);
+    --accent: #7c5cff;
+    --accent-2: #00e6d9;
+    --text: #e8e8ee;
+    --muted: #aab0bf;
+  }
+
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+  body{
+    background:
+      radial-gradient(800px 400px at 10% 10%, rgba(124,92,255,0.12), transparent 8%),
+      radial-gradient(600px 300px at 90% 90%, rgba(0,230,217,0.08), transparent 10%),
+      #0b0f14;
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+  }
+
+
+.btn.custom-btn {
+  background: linear-gradient(135deg, #06b6d4, #7c3aed);
+  padding: 14px 24px;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 18px rgba(7,10,25,0.6);
+}
+
+.btn.custom-btn:hover {
+  transform: scale(1.05) rotate(-1deg);
+  box-shadow: 0 12px 25px rgba(124,58,237,0.7);
+}
+
+  /* top bar */
+  .topbar{
+    position:fixed;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;z-index:30;
+  }
+  .brand{
+    display:flex;align-items:center;gap:12px;
+    background:linear-gradient(145deg, rgba(228, 0, 0, 0.02), rgba(255,255,255,0.01));
+    padding:10px 14px;border-radius:12px;backdrop-filter:blur(6px);box-shadow:0 6px 30px rgba(2,6,23,0.6);
+  }
+  .logo {
+    width:40px;height:40px;border-radius:8px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    box-shadow:0 6px 18px rgba(124,92,255,0.18), inset 0 -6px 18px rgba(0,0,0,0.12);
+  }
+  .brand h4{margin:0;font-weight:700;color:white;font-size:15px;}
+
+  .controls{display:flex;gap:10px;align-items:center;}
+  .glass-btn{
+    background:var(--glass-bg);border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px;color:var(--text);
+    backdrop-filter:blur(8px);cursor:pointer;font-weight:600;
+  }
+  .glass-btn.toggle{display:flex;gap:8px;align-items:center;}
+  .glass-btn:hover{transform:translateY(-2px);}
+
+  /* page layout */
+  main{padding-top:120px;}
+  section{max-width:1100px;margin:40px auto;padding:28px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));backdrop-filter:blur(8px);box-shadow:0 10px 40px rgba(2,6,23,0.6);}
+
+  /* Hero */
+  .hero{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;padding:80px 24px;}
+  .hero h1{font-size:48px;margin:0 0 12px;color:#fff;letter-spacing:-0.6px;text-shadow:0 6px 30px rgba(124,92,255,0.08);}
+  .hero p{max-width:900px;color:var(--muted);margin:0 auto 18px;font-size:18px;}
+  .cta {display:inline-block;padding:12px 26px;border-radius:999px;font-weight:700;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#041018;border:none;cursor:pointer;box-shadow:0 12px 30px rgba(124,92,255,0.18);}
+
+  /* Features */
+  .features{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;margin-top:18px;}
+  .feature{width:280px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);backdrop-filter:blur(6px);text-align:center;}
+  .feature img{width:54px;height:54px;margin-bottom:12px;filter:drop-shadow(0 6px 20px rgba(0,0,0,0.5));}
+  .feature h3{margin:6px 0 6px;font-size:18px}
+  .feature p{color:var(--muted);font-size:14px;margin:0}
+  
+  /* Testimonials */
+  .testimonials {padding:10px 0}
+  .testimonial-card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));padding:16px;border-radius:12px;margin:8px;border:1px solid rgba(255,255,255,0.03);color:var(--muted);}
+
+  /* Gallery */
+  .gallery{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  .gallery img{width:220px;height:140px;object-fit:cover;border-radius:10px;box-shadow:0 12px 30px rgba(2,6,23,0.6);cursor:pointer;transition:transform .28s}
+  .gallery img:hover{transform:translateY(-6px) scale(1.02)}
+
+  /* FAQ */
+  .accordion-item{margin-bottom:8px;border-radius:10px;overflow:hidden}
+  .accordion-header{padding:12px;background:rgba(255,255,255,0.02);cursor:pointer;font-weight:600}
+  .accordion-content{padding:12px;background:rgba(0,0,0,0.05);display:none;color:var(--muted)}
+
+  /* Contact */
+  .contact{display:flex;flex-direction:column;align-items:center;gap:8px}
+
+  /* Links table (readonly) */
+  .links-table{width:100%;max-width:900px;margin:22px auto;border-collapse:collapse}
+  .links-table th,.links-table td{padding:12px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--muted);text-align:left}
+  .links-table td a{color:var(--accent-2);text-decoration:underline;word-break:break-all}
+
+  /* Light appearance adjustments */
+  @media (max-width:900px){
+    .hero h1{font-size:34px}
+    .feature{width:100%}
+    iframe{height:60vh}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="logo" aria-hidden></div>
+    <div>
+      <h4>لوحة العميل — صفحة هبوط</h4>
+      <div style="font-size:12px;color:var(--muted)">Dark Glass UI</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="glass-btn" id="openAdmin">فتح لوحة التحكم</button>
+    <button class="glass-btn" id="downloadBtn">تحميل المحتوى</button>
+    <button class="glass-btn" id="darkToggle">تبديل الوضع</button>
+  </div>
+</div>
+<!-- الفيديو الأصلي -->
+  <video autoplay muted loop style src="https://www.pexels.com/download/video/6963744/"  width="1500"></video>
+<main>
+  <!-- Hero -->
+  <section id="heroSection">
+    <div class="hero">
+      <h1 id="serviceTitle">خدمة رائعة</h1>
+      <p id="serviceDesc">وصف الخدمة يظهر هنا تلقائيًا من لوحة التحكم — نص قابل للتحديث فوراً.</p>
+      <a href="https://www.youtube.com/@Rakthon/videos" class="btn custom-btn">اذهب إلى الصفحة</a>
+    </div>
+  </section>
+<h1>تحقق من الضغط على Ctrl + Shift + Z</h1>
+  <!-- Features -->
+  <section id="featuresSection">
+    <h2 style="text-align:center;margin-bottom:14px;color:var(--text)">ميزاتنا</h2>
+    <div class="features">
+      <div class="feature">
+        <img id="feature1Img" src="https://www.svgrepo.com/show/349526/analytics.svg"alt="">
+        <h3 id="feature1Title">HTML & CSS</h3>
+        <p id="feature1Desc">شرح الميزة الأولى</p>
+      </div>
+      <div class="feature">
+        <img id="feature2Img" src="https://www.svgrepo.com/show/349523/shield.svg"alt="">
+        <h3 id="feature2Title">Python Tools</h3>
+        <p id="feature2Desc">شرح الميزة الثانية</p>
+      </div>
+      <div class="feature">
+        <img id="feature3Img" src="https://www.svgrepo.com/show/349510/rocket.svg"alt="">
+        <h3 id="feature3Title">C++ Code</h3>
+        <p id="feature3Desc">شرح الميزة الثالثة</p>
+      </div>
+  </section>
+      
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section id="testimonialsSection">
+    <h2 style="text-align:center;margin-bottom:14px;color:var(--text)">آراء العملاء</h2>
+    <div class="testimonials" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+      <div class="testimonial-card">
+        <p id="testimonial1">رأي العميل 1</p>
+        <strong id="testimonial1Name">العميل 1</strong>
+      </div>
+      <div class="testimonial-card">
+        <p id="testimonial2">رأي العميل 2</p>
+        <strong id="testimonial2Name">العميل 2</strong>
+      </div>
+      <div class="testimonial-card">
+        <p id="testimonial3">رأي العميل 3</p>
+        <strong id="testimonial3Name">العميل 3</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section id="gallerySection">
+    <h2 style="text-align:center;margin-bottom:14px;color:var(--text)">معرض الصور</h2>
+    <div class="gallery">
+      <img id="gallery1" src="https://via.placeholder.com/400x250" alt="">
+      <img id="gallery2" src="https://via.placeholder.com/400x250" alt="">
+      <img id="gallery3" src="https://via.placeholder.com/400x250" alt="">
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faqSection">
+    <h2 style="text-align:center;margin-bottom:14px;color:var(--text)">الأسئلة الشائعة</h2>
+    <div class="accordion">
+      <div class="accordion-item">
+        <div class="accordion-header" id="faq1Q">سؤال 1</div>
+        <div class="accordion-content" id="faq1A">إجابة 1</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" id="faq2Q">سؤال 2</div>
+        <div class="accordion-content" id="faq2A">إجابة 2</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" id="faq3Q">سؤال 3</div>
+        <div class="accordion-content" id="faq3A">إجابة 3</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contactSection">
+    <h2 style="text-align:center;margin-bottom:14px;color:var(--text)" id="contactTitle">تواصل معنا</h2>
+    <p id="contactDesc" style="text-align:center;color:var(--muted)">يمكنك مراسلتنا على البريد الإلكتروني التالي</p>
+
+    <table class="links-table" aria-label="روابط العميل">
+      <thead>
+        <tr><th>اسم الرابط</th><th>الرابط</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>رابط 1</td><td id="link1cell"><a id="link1" href="#" target="_blank">—</a></td></tr>
+        <tr><td>رابط 2</td><td id="link2cell"><a id="link2" href="#" target="_blank">—</a></td></tr>
+        <tr><td>رابط 3</td><td id="link3cell"><a id="link3" href="#" target="_blank">—</a></td></tr>
+        <tr><td>رابط 4</td><td id="link4cell"><a id="link4" href="#" target="_blank">—</a></td></tr>
+        <tr><td>رابط 5</td><td id="link5cell"><a id="link5" href="#" target="_blank">—</a></td></tr>
+      </tbody>
+    </table>
+
+  </section>
+</main>
+
+<!-- Lightbox for gallery -->
+<div id="lightbox" style="display:none;position:fixed;inset:0;background:rgba(2,6,23,0.85);justify-content:center;align-items:center;z-index:60;">
+  <img id="lb" src="" style="max-width:92%;max-height:92%;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,0.7)">
+</div>
+
+<script>
+/* basic interactions */
+document.querySelectorAll('.accordion-header').forEach(h=>{
+  h.addEventListener('click', ()=>{ const content=h.nextElementSibling; content.style.display = content.style.display==='block' ? 'none' : 'block'; });
+});
+document.querySelectorAll('.gallery img').forEach(img=>{
+  img.addEventListener('click', ()=>{ document.getElementById('lb').src = img.src; document.getElementById('lightbox').style.display='flex'; });
+});
+document.getElementById('lightbox').addEventListener('click', ()=>document.getElementById('lightbox').style.display='none');
+
+document.getElementById('openAdmin').addEventListener('click', ()=>{ window.open('admin.html','_blank'); });
+document.getElementById('darkToggle').addEventListener('click', ()=>document.body.classList.toggle('dark'));
+
+/* Download content JSON */
+document.getElementById('downloadBtn').addEventListener('click', ()=>{
+  const data = {};
+  const ids = ['serviceTitle','serviceDesc','ctaBtn','feature1Title','feature1Desc','feature1Img','feature2Title','feature2Desc','feature2Img','feature3Title','feature3Desc','feature3Img','testimonial1','testimonial1Name','testimonial2','testimonial2Name','testimonial3','testimonial3Name','gallery1','gallery2','gallery3','faq1Q','faq1A','faq2Q','faq2A','faq3Q','faq3A','contactTitle','contactDesc','link1','link2','link3','link4','link5'];
+  ids.forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(el.tagName === 'IMG' || el.tagName === 'A') data[id] = el.src || el.href || el.innerText;
+    else data[id] = el.innerText || el.value || el.textContent;
+  });
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'site-content.json'; a.click(); URL.revokeObjectURL(url);
+});
+
+/* receive live updates from admin (postMessage) */
+window.addEventListener('message', (ev)=>{
+  if(!ev.data || typeof ev.data !== 'object') return;
+  const d = ev.data;
+  // hero
+  if(d.serviceTitle !== undefined) document.getElementById('serviceTitle').innerText = d.serviceTitle;
+  if(d.serviceDesc !== undefined) document.getElementById('serviceDesc').innerText = d.serviceDesc;
+  if(d.ctaBtn !== undefined) document.getElementById('ctaBtn').innerText = d.ctaBtn;
+  // features
+  ['feature1','feature2','feature3'].forEach(f=>{
+    if(d[f+'Title'] !== undefined && document.getElementById(f+'Title')) document.getElementById(f+'Title').innerText = d[f+'Title'];
+    if(d[f+'Desc'] !== undefined && document.getElementById(f+'Desc')) document.getElementById(f+'Desc').innerText = d[f+'Desc'];
+    if(d[f+'Img'] !== undefined && document.getElementById(f+'Img')) document.getElementById(f+'Img').src = d[f+'Img'] || '';
+  });
+  // testimonials
+  ['testimonial1','testimonial2','testimonial3'].forEach(t=>{
+    if(d[t] !== undefined && document.getElementById(t)) document.getElementById(t).innerText = d[t];
+    if(d[t+'Name'] !== undefined && document.getElementById(t+'Name')) document.getElementById(t+'Name').innerText = d[t+'Name'];
+  });
+  // gallery
+  ['gallery1','gallery2','gallery3'].forEach(g=>{ if(d[g]!==undefined && document.getElementById(g)) document.getElementById(g).src = d[g]; });
+  // faq
+  ['faq1Q','faq1A','faq2Q','faq2A','faq3Q','faq3A'].forEach(id=>{ if(d[id]!==undefined && document.getElementById(id)) document.getElementById(id).innerText = d[id]; });
+  // contact
+  if(d.contactTitle !== undefined && document.getElementById('contactTitle')) document.getElementById('contactTitle').innerText = d.contactTitle;
+  if(d.contactDesc !== undefined && document.getElementById('contactDesc')) document.getElementById('contactDesc').innerText = d.contactDesc;
+  // client links
+  ['link1','link2','link3','link4','link5'].forEach(l=>{
+    if(d[l]!==undefined && document.getElementById(l)){
+      const a = document.getElementById(l);
+      a.href = d[l] || '#';
+      a.innerText = d[l] ? d[l] : '—';
+    }
+  });
+});
+
+/* on load — read localStorage to persist */
+window.addEventListener('load', ()=>{
+  const map = {
+    serviceTitle:'serviceTitle', serviceDesc:'serviceDesc', ctaBtn:'ctaBtn',
+    feature1Title:'feature1Title', feature1Desc:'feature1Desc', feature1Img:'feature1Img',
+    feature2Title:'feature2Title', feature2Desc:'feature2Desc', feature2Img:'feature2Img',
+    feature3Title:'feature3Title', feature3Desc:'feature3Desc', feature3Img:'feature3Img',
+    testimonial1:'testimonial1', testimonial1Name:'testimonial1Name',
+    testimonial2:'testimonial2', testimonial2Name:'testimonial2Name',
+    testimonial3:'testimonial3', testimonial3Name:'testimonial3Name',
+    gallery1:'gallery1', gallery2:'gallery2', gallery3:'gallery3',
+    faq1Q:'faq1Q', faq1A:'faq1A', faq2Q:'faq2Q', faq2A:'faq2A', faq3Q:'faq3Q', faq3A:'faq3A',
+    contactTitle:'contactTitle', contactDesc:'contactDesc',
+    link1:'link1', link2:'link2', link3:'link3', link4:'link4', link5:'link5'
+  };
+  Object.keys(map).forEach(id=>{
+    const v = localStorage.getItem(map[id]);
+    if(v && document.getElementById(id)){
+      if(document.getElementById(id).tagName === 'IMG') document.getElementById(id).src = v;
+      else if(document.getElementById(id).tagName === 'A'){ document.getElementById(id).href = v; document.getElementById(id).innerText = v; }
+      else document.getElementById(id).innerText = v;
+    }
+  });
+});
+
+</script>
+<!-- زر لوحة التحكم مخفي -->
+<a id="adminBtn" href="hdgsdeeeydheuehedfdfdffdfdfdvdsfsnjf.html" 
+   style="position:fixed;bottom:40px;left:20px;z-index:9999;padding:10px 600px;
+          background:linear-gradient(90deg,var(--neon-cyan),var(--neon-purple));
+          color:#1eff00;font-weight:700;border-radius:12px;
+          box-shadow:0 0px 60px rgba(34, 255, 0, 0.4);text-decoration:none;
+          display:none;transition:transform 0.2s ease;"
+   onmouseover="this.style.transform='scale(1.1)'" 
+   onmouseout="this.style.transform='scale(1)'">
+   WEB  SS            RAYAN 
+</a>
+
+<script>
+  document.addEventListener('keydown', function(e) {
+    // تحقق من الضغط على Ctrl + Shift + A
+    if (e.ctrlKey && e.shiftKey && e.code === 'KeyZ') {
+      const btn = document.getElementById('adminBtn');
+      btn.style.display = btn.style.display === 'none' ? 'block' : 'none';
+    }
+  });
+</script>
+</body>
+</html>
