@@ -56,8 +56,6 @@ async function sha256(text){
 // user: "admin rayan"
 // pass: "rayan321"
 (async function resetAdminCredentials(){
-  const fixedUser = "admin rayan";
-  const fixedPassPlain = "rayan321";
   const hashed = await sha256(fixedPassPlain);
   // نعيد الضبط دائماً لتضمن أن البيانات المطلوبة هي المستخدمة
   localStorage.setItem("admin_user", fixedUser);
@@ -102,3 +100,4 @@ async function login(){
 </script>
 </body>
 </html>
+
