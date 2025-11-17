@@ -244,8 +244,92 @@
   <img id="lb" src="" style="max-width:92%;max-height:92%;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,0.7)">
 </div>
 
+<!-- إضافة Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js"></script>
+
 <script>
-/* basic interactions */
+// التهيئة - استخدم config الخاص بك
+const firebaseConfig = {
+  apiKey: "AIzaSyAy9owFh_HR8YlVaz-AgondpjYVvg5D5ik",
+  authDomain: "project1-29ff0.firebaseapp.com",
+  databaseURL: "https://project1-29ff0-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "project1-29ff0",
+  storageBucket: "project1-29ff0.firebasestorage.app",
+  messagingSenderId: "720681478940",
+  appId: "1:720681478940:web:4ae1e8fa726cf829d6a8d9",
+  measurementId: "G-RYG95STMGT"
+};
+
+// تهيئة Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+// دالة جلب البيانات من Firebase
+function loadFromFirebase() {
+  database.ref('siteData').on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      updateUI(data);
+      // حفظ في localStorage كنسخة احتياطية
+      localStorage.setItem('siteData', JSON.stringify(data));
+    }
+  });
+}
+
+// دالة تحديث الواجهة
+function updateUI(data) {
+  // hero
+  if(data.serviceTitle !== undefined) document.getElementById('serviceTitle').innerText = data.serviceTitle;
+  if(data.serviceDesc !== undefined) document.getElementById('serviceDesc').innerText = data.serviceDesc;
+  
+  // features
+  ['feature1','feature2','feature3'].forEach(f => {
+    if(data[`${f}Title`] !== undefined) document.getElementById(`${f}Title`).innerText = data[`${f}Title`];
+    if(data[`${f}Desc`] !== undefined) document.getElementById(`${f}Desc`).innerText = data[`${f}Desc`];
+    if(data[`${f}Img`] !== undefined) document.getElementById(`${f}Img`).src = data[`${f}Img`] || '';
+  });
+  
+  // testimonials
+  ['testimonial1','testimonial2','testimonial3'].forEach(t => {
+    if(data[t] !== undefined) document.getElementById(t).innerText = data[t];
+    if(data[`${t}Name`] !== undefined) document.getElementById(`${t}Name`).innerText = data[`${t}Name`];
+  });
+  
+  // gallery
+  ['gallery1','gallery2','gallery3'].forEach(g => {
+    if(data[g] !== undefined) document.getElementById(g).src = data[g] || '';
+  });
+  
+  // faq
+  ['faq1Q','faq1A','faq2Q','faq2A','faq3Q','faq3A'].forEach(id => {
+    if(data[id] !== undefined) document.getElementById(id).innerText = data[id];
+  });
+  
+  // contact
+  if(data.contactTitle !== undefined) document.getElementById('contactTitle').innerText = data.contactTitle;
+  if(data.contactDesc !== undefined) document.getElementById('contactDesc').innerText = data.contactDesc;
+  
+  // links
+  ['link1','link2','link3','link4','link5'].forEach(link => {
+    if(data[link] !== undefined) {
+      const element = document.getElementById(link);
+      element.href = data[link] || '#';
+      element.innerText = data[link] || '—';
+    }
+  });
+
+  // section visibility
+  ['Hero','Features','Testimonials','Gallery','FAQ','Contact'].forEach(section => {
+    const sectionElement = document.getElementById(section.toLowerCase() + 'Section');
+    const showKey = 'show' + section;
+    if (sectionElement && data[showKey] !== undefined) {
+      sectionElement.style.display = data[showKey] === '1' ? 'block' : 'none';
+    }
+  });
+}
+
+// basic interactions
 document.querySelectorAll('.accordion-header').forEach(h=>{
   h.addEventListener('click', ()=>{ const content=h.nextElementSibling; content.style.display = content.style.display==='block' ? 'none' : 'block'; });
 });
@@ -272,68 +356,12 @@ document.getElementById('downloadBtn').addEventListener('click', ()=>{
   const a = document.createElement('a'); a.href = url; a.download = 'site-content.json'; a.click(); URL.revokeObjectURL(url);
 });
 
-/* receive live updates from admin (postMessage) */
-window.addEventListener('message', (ev)=>{
-  if(!ev.data || typeof ev.data !== 'object') return;
-  const d = ev.data;
-  // hero
-  if(d.serviceTitle !== undefined) document.getElementById('serviceTitle').innerText = d.serviceTitle;
-  if(d.serviceDesc !== undefined) document.getElementById('serviceDesc').innerText = d.serviceDesc;
-  if(d.ctaBtn !== undefined) document.getElementById('ctaBtn').innerText = d.ctaBtn;
-  // features
-  ['feature1','feature2','feature3'].forEach(f=>{
-    if(d[f+'Title'] !== undefined && document.getElementById(f+'Title')) document.getElementById(f+'Title').innerText = d[f+'Title'];
-    if(d[f+'Desc'] !== undefined && document.getElementById(f+'Desc')) document.getElementById(f+'Desc').innerText = d[f+'Desc'];
-    if(d[f+'Img'] !== undefined && document.getElementById(f+'Img')) document.getElementById(f+'Img').src = d[f+'Img'] || '';
-  });
-  // testimonials
-  ['testimonial1','testimonial2','testimonial3'].forEach(t=>{
-    if(d[t] !== undefined && document.getElementById(t)) document.getElementById(t).innerText = d[t];
-    if(d[t+'Name'] !== undefined && document.getElementById(t+'Name')) document.getElementById(t+'Name').innerText = d[t+'Name'];
-  });
-  // gallery
-  ['gallery1','gallery2','gallery3'].forEach(g=>{ if(d[g]!==undefined && document.getElementById(g)) document.getElementById(g).src = d[g]; });
-  // faq
-  ['faq1Q','faq1A','faq2Q','faq2A','faq3Q','faq3A'].forEach(id=>{ if(d[id]!==undefined && document.getElementById(id)) document.getElementById(id).innerText = d[id]; });
-  // contact
-  if(d.contactTitle !== undefined && document.getElementById('contactTitle')) document.getElementById('contactTitle').innerText = d.contactTitle;
-  if(d.contactDesc !== undefined && document.getElementById('contactDesc')) document.getElementById('contactDesc').innerText = d.contactDesc;
-  // client links
-  ['link1','link2','link3','link4','link5'].forEach(l=>{
-    if(d[l]!==undefined && document.getElementById(l)){
-      const a = document.getElementById(l);
-      a.href = d[l] || '#';
-      a.innerText = d[l] ? d[l] : '—';
-    }
-  });
+// تحميل البيانات عند بدء التشغيل
+window.addEventListener('load', () => {
+  loadFromFirebase();
 });
-
-/* on load — read localStorage to persist */
-window.addEventListener('load', ()=>{
-  const map = {
-    serviceTitle:'serviceTitle', serviceDesc:'serviceDesc', ctaBtn:'ctaBtn',
-    feature1Title:'feature1Title', feature1Desc:'feature1Desc', feature1Img:'feature1Img',
-    feature2Title:'feature2Title', feature2Desc:'feature2Desc', feature2Img:'feature2Img',
-    feature3Title:'feature3Title', feature3Desc:'feature3Desc', feature3Img:'feature3Img',
-    testimonial1:'testimonial1', testimonial1Name:'testimonial1Name',
-    testimonial2:'testimonial2', testimonial2Name:'testimonial2Name',
-    testimonial3:'testimonial3', testimonial3Name:'testimonial3Name',
-    gallery1:'gallery1', gallery2:'gallery2', gallery3:'gallery3',
-    faq1Q:'faq1Q', faq1A:'faq1A', faq2Q:'faq2Q', faq2A:'faq2A', faq3Q:'faq3Q', faq3A:'faq3A',
-    contactTitle:'contactTitle', contactDesc:'contactDesc',
-    link1:'link1', link2:'link2', link3:'link3', link4:'link4', link5:'link5'
-  };
-  Object.keys(map).forEach(id=>{
-    const v = localStorage.getItem(map[id]);
-    if(v && document.getElementById(id)){
-      if(document.getElementById(id).tagName === 'IMG') document.getElementById(id).src = v;
-      else if(document.getElementById(id).tagName === 'A'){ document.getElementById(id).href = v; document.getElementById(id).innerText = v; }
-      else document.getElementById(id).innerText = v;
-    }
-  });
-});
-
 </script>
+
 <!-- زر لوحة التحكم مخفي -->
 <a id="adminBtn" href="hdgsdeeeydheuehedfdfdffdfdfdvdsfsnjf.html" 
    style="position:fixed;bottom:40px;left:20px;z-index:9999;padding:10px 600px;
