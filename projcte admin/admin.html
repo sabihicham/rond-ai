@@ -30,6 +30,13 @@
 </head>
 <body>
 
+    <script>
+// تحقق فوري من تسجيل الدخول قبل تحميل الصفحة
+if(localStorage.getItem("logged") !== "yes") {
+  window.location.href = "login.html";
+}
+</script>
+
 <header>لوحة تحكم — Dark Glass UI (Live)</header>
 
 <div class="layout">
@@ -42,7 +49,7 @@
       <label>وصف الخدمة</label><textarea id="serviceDesc" placeholder="وصف مختصر هنا..."></textarea>
       <label>نص الزر الرئيسي</label><input id="ctaBtn" placeholder="ابدأ الآن">
       <div class="section-toggle"><span class="small">عرض القسم</span><input id="showHero" type="checkbox" checked></div>
-      <div class="save-note">التغييرات تظهر فوراً في المعاينة. تحفظ في LocalStorage تلقائياً.</div>
+      <div class="save-note">التغييرات تظهر فوراً في المعاينة. تحفظ في Firebase تلقائياً.</div>
     </div>
 
     <!-- Features -->
@@ -138,7 +145,26 @@
   </div>
 </div>
 
+<!-- إضافة Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js"></script>
+
 <script>
+// التهيئة - نفس config المستخدم في index.html
+const firebaseConfig = {
+  apiKey: "AIzaSyAy9owFh_HR8YlVaz-AgondpjYVvg5D5ik",
+  authDomain: "project1-29ff0.firebaseapp.com",
+  databaseURL: "https://project1-29ff0-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "project1-29ff0",
+  storageBucket: "project1-29ff0.firebasestorage.app",
+  messagingSenderId: "720681478940",
+  appId: "1:720681478940:web:4ae1e8fa726cf829d6a8d9",
+  measurementId: "G-RYG95STMGT"
+};
+
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
 /* Helper: collect all inputs */
 const fields = ['serviceTitle','serviceDesc','ctaBtn',
   'feature1Title','feature1Desc','feature1Img','feature2Title','feature2Desc','feature2Img','feature3Title','feature3Desc','feature3Img',
@@ -149,108 +175,117 @@ const fields = ['serviceTitle','serviceDesc','ctaBtn',
   'clientName','clientPhone','clientMessage','link1','link2','link3','link4','link5'
 ];
 
-/* shortcuts to DOM elements */
 function $id(id){return document.getElementById(id);}
 
-/* load from localStorage to inputs */
+/* load from Firebase to inputs */
 function loadToInputs(){
-  fields.forEach(k=>{
-    const el = $id(k);
-    if(!el) return;
-    const v = localStorage.getItem(k);
-    if(v !== null) el.value = v;
-  });
-  // load section visibility
-  ['Hero','Features','Testimonials','Gallery','FAQ','Contact'].forEach(s=>{
-    const chk = $id('show'+s);
-    const key = 'show'+s;
-    if(chk){
-      const v = localStorage.getItem(key);
-      chk.checked = v === null ? true : (v === '1');
+  database.ref('siteData').once('value').then((snapshot) => {
+    const data = snapshot.val();
+    if(data) {
+      fields.forEach(k => {
+        const el = $id(k);
+        if(el && data[k] !== undefined) {
+          el.value = data[k];
+        }
+      });
+      
+      // load section visibility
+      ['Hero','Features','Testimonials','Gallery','FAQ','Contact'].forEach(s => {
+        const chk = $id('show'+s);
+        const key = 'show'+s;
+        if(chk && data[key] !== undefined) {
+          chk.checked = data[key] === '1';
+        }
+      });
     }
-  });
-}
-loadToInputs();
-
-/* postMessage send */
-const preview = document.getElementById('preview').contentWindow;
-function postUpdate(pairs){
-  // send only the provided pairs
-  preview.postMessage(pairs,'*');
-  // also persist to localStorage
-  Object.keys(pairs).forEach(k => {
-    localStorage.setItem(k, pairs[k] ?? '');
+  }).catch((error) => {
+    console.error('Error loading data:', error);
   });
 }
 
-/* live update handler - send changed value immediately */
-document.querySelectorAll('input,textarea').forEach(inp=>{
-  inp.addEventListener('input', (e)=>{
+/* save to Firebase */
+function saveToFirebase(data) {
+  database.ref('siteData').update(data)
+    .then(() => {
+      console.log('Data saved successfully');
+    })
+    .catch((error) => {
+      console.error('Error saving data:', error);
+      alert('❌ حدث خطأ في الحفظ: ' + error.message);
+    });
+}
+
+/* live update handler */
+document.querySelectorAll('input,textarea').forEach(inp => {
+  inp.addEventListener('input', (e) => {
     const id = e.target.id;
-    const obj = {};
-    obj[id] = e.target.value;
-    postUpdate(obj);
+    const value = e.target.value;
+    const data = {};
+    data[id] = value;
+    saveToFirebase(data);
   });
 });
 
-/* Save all button - send full state */
-document.getElementById('saveAll').addEventListener('click', ()=>{
+/* Save all button */
+document.getElementById('saveAll').addEventListener('click', () => {
   const data = {};
-  fields.forEach(k => { const el = $id(k); if(el) data[k] = el.value; });
+  fields.forEach(k => { 
+    const el = $id(k); 
+    if(el) data[k] = el.value; 
+  });
+  
   // visibility
-  ['Hero','Features','Testimonials','Gallery','FAQ','Contact'].forEach(s=>{
+  ['Hero','Features','Testimonials','Gallery','FAQ','Contact'].forEach(s => {
     const val = $id('show'+s) && $id('show'+s).checked ? '1' : '0';
-    localStorage.setItem('show'+s, val);
     data['show'+s] = val;
   });
-  // send full dataset
-  postUpdate(data);
-  alert('✅ تم حفظ التغييرات في LocalStorage وإرسالها إلى المعاينة');
+  
+  saveToFirebase(data);
+  alert('✅ تم حفظ التغييرات في Firebase');
 });
 
 /* reset defaults */
-document.getElementById('resetDefaults').addEventListener('click', ()=>{
+document.getElementById('resetDefaults').addEventListener('click', () => {
   if(!confirm('هل تريد استعادة القيم الافتراضية؟')) return;
-  // remove keys
-  fields.forEach(k => localStorage.removeItem(k));
-  ['showHero','showFeatures','showTestimonials','showGallery','showFAQ','showContact'].forEach(k=>localStorage.removeItem(k));
-  // reload inputs and notify preview
-  loadToInputs();
-  postUpdate({reset:true});
-  alert('✅ تم استرجاع الافتراضيات');
+  database.ref('siteData').remove()
+    .then(() => {
+      loadToInputs();
+      alert('✅ تم استرجاع الافتراضيات');
+    })
+    .catch((error) => {
+      console.error('Error resetting data:', error);
+      alert('❌ حدث خطأ في الاستعادة');
+    });
 });
 
 /* section show/hide controls */
-['Hero','Features','Testimonials','Gallery','FAQ','Contact'].forEach(s=>{
+['Hero','Features','Testimonials','Gallery','FAQ','Contact'].forEach(s => {
   const chk = $id('show'+s);
   if(!chk) return;
-  chk.addEventListener('change', ()=>{
-    localStorage.setItem('show'+s, chk.checked ? '1' : '0');
-    postUpdate({['show'+s]: chk.checked ? '1' : '0'});
+  chk.addEventListener('change', () => {
+    const data = {};
+    data['show'+s] = chk.checked ? '1' : '0';
+    saveToFirebase(data);
   });
 });
 
-/* on load, send initial data to preview (so when admin opens, preview syncs) */
-window.addEventListener('load', ()=>{
-  const init = {};
-  fields.forEach(k=>{ const el = $id(k); init[k] = el ? el.value : ''; });
-  ['Hero','Features','Testimonials','Gallery','FAQ','Contact'].forEach(s=>{ init['show'+s] = $id('show'+s) && $id('show'+s).checked ? '1' : '0'; });
-  // small delay to ensure iframe ready
-  setTimeout(()=>{ postUpdate(init); }, 300);
+/* on load */
+window.addEventListener('load', () => {
+  loadToInputs();
 });
 
+// التحقق من تسجيل الدخول
 if(localStorage.getItem("logged") !== "yes"){
   location.href="login.html";
 }
 
-</script>
-<button onclick="logout()" style="position:fixed;top:20px;left:20px;padding:10px 18px;border:none;background:#a110db;color:#050101;border-radius:8px;cursor:pointer;">تسجيل خروج</button>
-
-<script>
 function logout(){
   localStorage.removeItem("logged");
   location.href="login.html";
 }
 </script>
+
+<button onclick="logout()" style="position:fixed;top:20px;left:20px;padding:10px 18px;border:none;background:#a110db;color:#050101;border-radius:8px;cursor:pointer;">تسجيل خروج</button>
+
 </body>
 </html>
