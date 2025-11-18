@@ -277,6 +277,8 @@ function loadFromFirebase() {
   });
 }
 
+
+
 // دالة تحديث الواجهة
 function updateUI(data) {
   // hero
@@ -338,7 +340,18 @@ document.querySelectorAll('.gallery img').forEach(img=>{
 });
 document.getElementById('lightbox').addEventListener('click', ()=>document.getElementById('lightbox').style.display='none');
 
-document.getElementById('openAdmin').addEventListener('click', ()=>{ window.open('admin.html','_blank'); });
+
+
+
+
+
+document.getElementById('openAdmin').addEventListener('click', ()=>{ 
+  window.open('login.html','_blank'); 
+});
+
+
+
+
 document.getElementById('darkToggle').addEventListener('click', ()=>document.body.classList.toggle('dark'));
 
 /* Download content JSON */
@@ -362,23 +375,23 @@ window.addEventListener('load', () => {
 });
 </script>
 
-<!-- زر لوحة التحكم مخفي -->
-<a id="adminBtn" href="hdgsdeeeydheuehedfdfdffdfdfdvdsfsnjf.html" 
-   style="position:fixed;bottom:40px;left:20px;z-index:9999;padding:10px 600px;
+ <!-- زر لوحة التحكم مخفي -->
+<a id="loginBtn" href="cart.html" 
+   style="position:fixed;bottom:20px;left:20px;z-index:9999;padding:12px 16px;
           background:linear-gradient(90deg,var(--neon-cyan),var(--neon-purple));
-          color:#1eff00;font-weight:700;border-radius:12px;
-          box-shadow:0 0px 60px rgba(34, 255, 0, 0.4);text-decoration:none;
+          color:#0000ff;font-weight:700;border-radius:12px;
+          box-shadow:0 6px 20px rgba(255, 0, 0, 0.4);text-decoration:none;
           display:none;transition:transform 0.2s ease;"
    onmouseover="this.style.transform='scale(1.1)'" 
    onmouseout="this.style.transform='scale(1)'">
-   WEB  SS            RAYAN 
+   لوحة التحكم
 </a>
 
 <script>
   document.addEventListener('keydown', function(e) {
-    // تحقق من الضغط على Ctrl + Shift + A
+    // تحقق من الضغط على Ctrl + Shift
     if (e.ctrlKey && e.shiftKey && e.code === 'KeyZ') {
-      const btn = document.getElementById('adminBtn');
+      const btn = document.getElementById('loginBtn');
       btn.style.display = btn.style.display === 'none' ? 'block' : 'none';
     }
   });
